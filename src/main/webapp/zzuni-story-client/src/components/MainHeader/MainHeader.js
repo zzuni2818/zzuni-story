@@ -1,4 +1,5 @@
 import './MainHeader.css';
+import { Link } from 'react-router-dom';
 
 const MainHeader = (props) => {
   const categoryHandler = (event) => {
@@ -12,24 +13,24 @@ const MainHeader = (props) => {
         <nav className='d-flex gap-5 ms-5'>
           {props.categories.map((category) => {
             return category.selected ? (
-              <a
+              <Link
                 key={category.name}
                 className='main-header-active'
-                href='#'
+                to='/'
                 onClick={categoryHandler}
               >
                 {category.name}
-              </a>
+              </Link>
             ) : (
-              <a key={category.name} href='#' onClick={categoryHandler}>
+              <Link key={category.name} to='#' onClick={categoryHandler}>
                 {category.name}
-              </a>
+              </Link>
             );
           })}
         </nav>
       </div>
       <nav>
-        <a href='#'>Login</a>
+        <Link to='/login'>Login</Link>
       </nav>
     </header>
   );
