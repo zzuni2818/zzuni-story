@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import MainHeader from './components/MainHeader/MainHeader';
 import Login from './components/pages/Login';
+import Signup from './components/pages/Signup';
 
 function App() {
   const [mainCategories, setMainCategories] = useState([
@@ -33,6 +34,7 @@ function App() {
       />
       <Routes>
         <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<Signup />} />
       </Routes>
       {/* <main>main</main> */}
       <footer>footer</footer>

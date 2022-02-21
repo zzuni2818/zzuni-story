@@ -29,7 +29,6 @@ const Login = () => {
           className='form-control'
           type='text'
           name='username'
-          id='inputUserName'
           placeholder='Username'
           onChange={usernameChangeHandler}
           autoFocus
@@ -38,7 +37,6 @@ const Login = () => {
           className='form-control'
           type='text'
           name='password'
-          id='inputPassword'
           placeholder='Password'
           onChange={passwordChangeHandler}
         ></input>
@@ -50,7 +48,7 @@ const Login = () => {
           Login
         </button>
         <div className='d-flex justify-content-end p-1 login-helper-tools'>
-          <Link to='#'>Sign Up</Link>
+          <Link to='/signup'>Sign Up</Link>
         </div>
       </form>
     </div>

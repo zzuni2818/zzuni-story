@@ -30,7 +30,8 @@ const MainHeader = (props) => {
         </nav>
       </div>
       <nav>
-        <Link to='/login'>Login</Link>
+        <Link to='/login' onClick={categoryHandler}>Login</Link>
+        {/* onClick login button remove effect which is selected category before */}
       </nav>
     </header>
   );
