@@ -1,0 +1,22 @@
+.main-header {
+  font-size: 17px;
+}
+.main-header-title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+.main-header a:link,
+a:visited {
+  color: black;
+  text-decoration: none;
+}
+.main-header a:hover,
+a:active {
+  /* color: red; */
+  font-weight: bold;
+}
+
+.main-header-active {
+  font-weight: bold;
+  border-bottom: 5px solid black;
+}
