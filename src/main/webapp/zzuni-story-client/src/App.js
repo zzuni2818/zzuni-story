@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import MainHeader from './components/MainHeader/MainHeader';
-import Login from './components/Login/Login';
+import Login from './components/pages/Login';
 
 function App() {
   const [mainCategories, setMainCategories] = useState([
