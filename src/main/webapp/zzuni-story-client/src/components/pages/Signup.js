@@ -61,9 +61,7 @@ const Signup = () => {
           onChange={usernameChangeHandler}
         ></input>
         {!usernameErrorMessage && (
-          <p className='form-signup-error-message-hide'>
-            
-          </p>
+          <p className='form-signup-error-message-hide'></p>
         )}
         {usernameErrorMessage && (
           <p className='form-signup-error-message-show'>
