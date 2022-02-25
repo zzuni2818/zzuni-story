@@ -16,39 +16,39 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
-    private static UserDto.SignUpDto signUpDto1;
-    private static UserDto.SignUpDto signUpDto2;
-    private static UserDto.SignUpDto signUpDto3;
-    private static UserDto.SignUpDto signUpDto4;
+    private static UserDto.ReqSignUpDto reqSignUpDto1;
+    private static UserDto.ReqSignUpDto reqSignUpDto2;
+    private static UserDto.ReqSignUpDto reqSignUpDto3;
+    private static UserDto.ReqSignUpDto reqSignUpDto4;
 
     @BeforeAll
     public static void setUp() {
-        signUpDto1 = new UserDto.SignUpDto();
-        signUpDto1.setUsername("User1_username");
-        signUpDto1.setPassword("User1_password");
+        reqSignUpDto1 = new UserDto.ReqSignUpDto();
+        reqSignUpDto1.setUsername("User1_username");
+        reqSignUpDto1.setPassword("User1_password");
 
-        signUpDto2 = new UserDto.SignUpDto();
-        signUpDto2.setUsername("User2_username");
-        signUpDto2.setPassword("User2_password");
+        reqSignUpDto2 = new UserDto.ReqSignUpDto();
+        reqSignUpDto2.setUsername("User2_username");
+        reqSignUpDto2.setPassword("User2_password");
 
-        signUpDto3 = new UserDto.SignUpDto();
-        signUpDto3.setUsername("User3_username");
-        signUpDto3.setPassword("User3_password");
+        reqSignUpDto3 = new UserDto.ReqSignUpDto();
+        reqSignUpDto3.setUsername("User3_username");
+        reqSignUpDto3.setPassword("User3_password");
 
-        signUpDto4 = new UserDto.SignUpDto();
-        signUpDto4.setUsername(signUpDto1.getUsername());
-        signUpDto4.setPassword(signUpDto1.getPassword());
+        reqSignUpDto4 = new UserDto.ReqSignUpDto();
+        reqSignUpDto4.setUsername(reqSignUpDto1.getUsername());
+        reqSignUpDto4.setPassword(reqSignUpDto1.getPassword());
     }
 
     @Test
     public void count() {
         userService.removeAll();
         assertThat(userService.getCount()).isEqualTo(0);
-        userService.add(signUpDto1);
+        userService.add(reqSignUpDto1);
         assertThat(userService.getCount()).isEqualTo(1);
-        userService.add(signUpDto2);
+        userService.add(reqSignUpDto2);
         assertThat(userService.getCount()).isEqualTo(2);
-        userService.add(signUpDto3);
+        userService.add(reqSignUpDto3);
         assertThat(userService.getCount()).isEqualTo(3);
     }
 
@@ -57,42 +57,42 @@ public class UserServiceTest {
         userService.removeAll();
         assertThat(userService.getCount()).isEqualTo(0);
 
-        Long user1_id = userService.add(signUpDto1);
-        assertThat(userService.get(user1_id).get().getUsername()).isEqualTo(signUpDto1.getUsername());
-        assertThat(userService.get(user1_id).get().getUsername()).isNotEqualTo(signUpDto2.getUsername());
-        assertThat(userService.get(user1_id).get().getUsername()).isNotEqualTo(signUpDto3.getUsername());
+        Long user1_id = userService.add(reqSignUpDto1);
+        assertThat(userService.get(user1_id).get().getUsername()).isEqualTo(reqSignUpDto1.getUsername());
+        assertThat(userService.get(user1_id).get().getUsername()).isNotEqualTo(reqSignUpDto2.getUsername());
+        assertThat(userService.get(user1_id).get().getUsername()).isNotEqualTo(reqSignUpDto3.getUsername());
 
-        Long user2_id = userService.add(signUpDto2);
-        assertThat(userService.get(user2_id).get().getUsername()).isNotEqualTo(signUpDto1.getUsername());
-        assertThat(userService.get(user2_id).get().getUsername()).isEqualTo(signUpDto2.getUsername());
-        assertThat(userService.get(user2_id).get().getUsername()).isNotEqualTo(signUpDto3.getUsername());
+        Long user2_id = userService.add(reqSignUpDto2);
+        assertThat(userService.get(user2_id).get().getUsername()).isNotEqualTo(reqSignUpDto1.getUsername());
+        assertThat(userService.get(user2_id).get().getUsername()).isEqualTo(reqSignUpDto2.getUsername());
+        assertThat(userService.get(user2_id).get().getUsername()).isNotEqualTo(reqSignUpDto3.getUsername());
 
-        userService.add(signUpDto3);
-        assertThat(userService.loadUserByUsername(signUpDto3.getUsername()).getUsername()).isNotEqualTo(signUpDto1.getUsername());
-        assertThat(userService.loadUserByUsername(signUpDto3.getUsername()).getUsername()).isNotEqualTo(signUpDto2.getUsername());
-        assertThat(userService.loadUserByUsername(signUpDto3.getUsername()).getUsername()).isEqualTo(signUpDto3.getUsername());
+        userService.add(reqSignUpDto3);
+        assertThat(userService.loadUserByUsername(reqSignUpDto3.getUsername()).getUsername()).isNotEqualTo(reqSignUpDto1.getUsername());
+        assertThat(userService.loadUserByUsername(reqSignUpDto3.getUsername()).getUsername()).isNotEqualTo(reqSignUpDto2.getUsername());
+        assertThat(userService.loadUserByUsername(reqSignUpDto3.getUsername()).getUsername()).isEqualTo(reqSignUpDto3.getUsername());
     }
 
     @Test
     public void addAndRemove() {
         userService.removeAll();
         assertThat(userService.getCount()).isEqualTo(0);
-        Long user1_id = userService.add(signUpDto1);
-        Long user2_id = userService.add(signUpDto2);
-        Long user3_id = userService.add(signUpDto3);
+        Long user1_id = userService.add(reqSignUpDto1);
+        Long user2_id = userService.add(reqSignUpDto2);
+        Long user3_id = userService.add(reqSignUpDto3);
         assertThat(userService.getCount()).isEqualTo(3);
 
         userService.remove(user1_id);
         assertThat(userService.getCount()).isEqualTo(2);
         assertThat(userService.get(user1_id).isEmpty()).isEqualTo(true);
-        assertThat(userService.get(user2_id).get().getUsername()).isEqualTo(signUpDto2.getUsername());
-        assertThat(userService.get(user3_id).get().getUsername()).isEqualTo(signUpDto3.getUsername());
+        assertThat(userService.get(user2_id).get().getUsername()).isEqualTo(reqSignUpDto2.getUsername());
+        assertThat(userService.get(user3_id).get().getUsername()).isEqualTo(reqSignUpDto3.getUsername());
 
         userService.remove(user2_id);
         assertThat(userService.getCount()).isEqualTo(1);
         assertThat(userService.get(user1_id).isEmpty()).isEqualTo(true);
         assertThat(userService.get(user2_id).isEmpty()).isEqualTo(true);
-        assertThat(userService.get(user3_id).get().getUsername()).isEqualTo(signUpDto3.getUsername());
+        assertThat(userService.get(user3_id).get().getUsername()).isEqualTo(reqSignUpDto3.getUsername());
 
         userService.remove(user3_id);
         assertThat(userService.getCount()).isEqualTo(0);
@@ -106,9 +106,9 @@ public class UserServiceTest {
         userService.removeAll();
         assertThat(userService.getCount()).isEqualTo(0);
 
-        userService.add(signUpDto1);
+        userService.add(reqSignUpDto1);
         assertThrows(DataIntegrityViolationException.class, () -> {
-            userService.add(signUpDto4);
+            userService.add(reqSignUpDto4);
         });
     }
 }

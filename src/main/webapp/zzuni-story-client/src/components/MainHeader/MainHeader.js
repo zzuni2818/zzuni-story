@@ -1,9 +1,33 @@
+import { useState, useEffect } from 'react';
 import './MainHeader.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthService from '../services/AuthService';
 
 const MainHeader = (props) => {
+  const [username, setUsername] = useState(props.username);
+  const navigate = useNavigate();
+
   const categoryHandler = (event) => {
     props.onSelectedMainCategory(event.target.innerHTML);
+  };
+
+  useEffect(() => {
+    setUsername(props.username);
+  }, [props.username]); // when username of props updated, update username of state
+
+  const loginHandler = () => {
+    props.onSelectedMainCategory('');
+  };
+  const logoutHandler = () => {
+    props.onSelectedMainCategory('');
+    AuthService.logout('http://localhost:8081/auth/logout', username)
+      .then((response) => {
+        props.onSuccessLogout(response);
+        navigate('/login');
+      })
+      .catch((error) => {
+        props.onFailLogout(error.response);
+      });
   };
 
   return (
@@ -30,8 +54,13 @@ const MainHeader = (props) => {
         </nav>
       </div>
       <nav>
-        <Link to='/login' onClick={categoryHandler}>Login</Link>
-        {/* onClick login button remove effect which is selected category before */}
+        {!username && (
+          <Link to='/login' onClick={loginHandler}>
+            Login
+          </Link>
+        )}
+        {username && <span onClick={logoutHandler}>{username}</span>}
+        {/* onClick login and logout button remove effect which is selected category before */}
       </nav>
     </header>
   );

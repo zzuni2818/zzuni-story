@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthService from '../services/AuthService';
 import './Login.css';
-const Login = () => {
+const Login = (props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const navigate = useNavigate();
+
   const usernameChangeHandler = (event) => {
     setUsername(event.target.value);
   };
@@ -12,8 +16,16 @@ const Login = () => {
   };
   const submitHandler = (event) => {
     event.preventDefault();
-    //TODO
-    //add post data
+
+    AuthService.login('http://localhost:8081/auth/login', username, password)
+      .then((response) => {
+        props.onSuccessLogin(response);
+        navigate('/');
+      })
+      .catch((error) => {
+        props.onFailLogin(error.response);
+      });
+
     setUsername('');
     setPassword('');
   };
@@ -30,14 +42,16 @@ const Login = () => {
           type='text'
           name='username'
           placeholder='Username'
+          value={username}
           onChange={usernameChangeHandler}
           autoFocus
         ></input>
         <input
           className='form-control'
-          type='text'
+          type='password'
           name='password'
           placeholder='Password'
+          value={password}
           onChange={passwordChangeHandler}
         ></input>
         {/* <p id='loginMessage' className='loginMessage'>Id or Password is not correct. </p> */}

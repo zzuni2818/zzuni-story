@@ -6,10 +6,10 @@ import com.zzuni.zzunistory.domain.User;
 import com.zzuni.zzunistory.repository.UserRepository;
 import com.zzuni.zzunistory.vo.UserVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(rollbackFor = Exception.class)
     public void remove(Long id) {
@@ -38,11 +38,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Long add(UserDto.SignUpDto signupDto) {
+    public Long add(UserDto.ReqSignUpDto reqSignupDto) {
         return userRepository.save(User.builder()
-                .username(signupDto.getUsername())
-                .password(passwordEncoder.encode(signupDto.getPassword()))
-                .authority(UserRole.ROLE_USER.getDescription())
+                .username(reqSignupDto.getUsername())
+                .password(passwordEncoder.encode(reqSignupDto.getPassword()))
+                .roles(UserRole.ROLE_USER.getDescription())
                 .build()).getId();
     }
 
@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserVo loadUserByUsername(String username) throws UsernameNotFoundException {
         return new UserVo(userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username)));
     }
 }

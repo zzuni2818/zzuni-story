@@ -15,21 +15,21 @@ public class UserVo implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private String authority;
+    private String roles;
 
     public UserVo(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.authority = user.getAuthority();
+        this.roles = user.getRoles();
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> roles = new HashSet<>();
-        for(String role : authority.split(",")) {
-            roles.add(new SimpleGrantedAuthority(role));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        for(String role : roles.split(",")) {
+            authorities.add(new SimpleGrantedAuthority(role));
         }
-        return roles;
+        return authorities;
     }
 
     @Override
