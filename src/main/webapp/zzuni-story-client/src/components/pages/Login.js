@@ -14,18 +14,24 @@ const Login = (props) => {
   const passwordChangeHandler = (event) => {
     setPassword(event.target.value);
   };
+
+  const loginSuccessHandler = (response) => {
+    props.onSuccessLogin(response);
+    navigate('/');
+  };
+  const loginFailHandler = (error) => {
+    props.onFailLogin(error);
+  };
+
   const submitHandler = (event) => {
     event.preventDefault();
 
-    AuthService.login('http://localhost:8081/auth/login', username, password)
-      .then((response) => {
-        props.onSuccessLogin(response);
-        navigate('/');
-      })
-      .catch((error) => {
-        props.onFailLogin(error.response);
-      });
-
+    AuthService.login(
+      username,
+      password,
+      loginSuccessHandler,
+      loginFailHandler
+    );
     setUsername('');
     setPassword('');
   };

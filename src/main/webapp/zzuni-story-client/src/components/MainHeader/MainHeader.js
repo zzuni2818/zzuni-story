@@ -18,16 +18,18 @@ const MainHeader = (props) => {
   const loginHandler = () => {
     props.onSelectedMainCategory('');
   };
+
+  const LogoutSuccessHandler = (response) => {
+    props.onSuccessLogout(response);
+    navigate('/login');
+  };
+  const LogoutFailHandler = (error) => {
+    props.onFailLogout(error);
+  };
+
   const logoutHandler = () => {
     props.onSelectedMainCategory('');
-    AuthService.logout('http://localhost:8081/auth/logout', username)
-      .then((response) => {
-        props.onSuccessLogout(response);
-        navigate('/login');
-      })
-      .catch((error) => {
-        props.onFailLogout(error.response);
-      });
+    AuthService.logout(LogoutSuccessHandler, LogoutFailHandler);
   };
 
   return (

@@ -8,17 +8,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtProvider {
     private final long ACCESS_TOKEN_VALID_TIME = 60 * 60 * 1000L; // 1 hour
     private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 7 * 1000L; //1 week
 
-    private String ACCESS_TOKEN_SECRET_KEY = "accessTokenSecretKey_test";
-    private String REFRESH_TOKEN_SECRET_KEY = "refreshTokenSecretKey_test";
+    private String SECRET_KEY = "secretKey_test";
 
     public String createAccessToken(UserVo userVo) {
         Claims claims = Jwts.claims().setSubject(userVo.getUsername());
+        claims.put("jti", UUID.randomUUID().toString()); // prevent to create duplicate token
         claims.put("userId", userVo.getId());
         claims.put("roles", userVo.getRoles());
         Date now = new Date();
@@ -26,24 +27,28 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_VALID_TIME))
-                .signWith(SignatureAlgorithm.HS256, ACCESS_TOKEN_SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
-    public String createRefreshToken() {
+    public String createRefreshToken(UserVo userVo) {
+        Claims claims = Jwts.claims().setSubject(userVo.getUsername());
+        claims.put("userId", userVo.getId());
+        claims.put("jti", UUID.randomUUID().toString()); // prevent to create duplicate token
         Date now = new Date();
         return Jwts.builder()
+                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_VALID_TIME))
-                .signWith(SignatureAlgorithm.HS256, REFRESH_TOKEN_SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
 
-    public boolean validateAccessToken(String accessToken) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(ACCESS_TOKEN_SECRET_KEY).parseClaimsJws(accessToken);
+    public boolean validateAccessToken(String accessToken) throws SignatureException {
+        Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(accessToken);
         return !claims.getBody().getExpiration().before(new Date());
     }
-    public boolean validateRefreshToken(String refreshToken) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(REFRESH_TOKEN_SECRET_KEY).parseClaimsJws(refreshToken);
+    public boolean validateRefreshToken(String refreshToken) throws SignatureException {
+        Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(refreshToken);
         return !claims.getBody().getExpiration().before(new Date());
     }
 
@@ -55,10 +60,16 @@ public class JwtProvider {
       return new UsernamePasswordAuthenticationToken(userVo.getUsername(), "", userVo.getAuthorities());
     }
 
-    private String getUsername(String accessToken) {
-        return Jwts.parser().setSigningKey(ACCESS_TOKEN_SECRET_KEY).parseClaimsJws(accessToken).getBody().getSubject();
+    public Long getUserId(String token) throws SignatureException {
+        return Long.parseLong(Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().get("userId").toString());
     }
-    private String getRoles(String accessToken) {
-        return Jwts.parser().setSigningKey(ACCESS_TOKEN_SECRET_KEY).parseClaimsJws(accessToken).getBody().get("roles").toString();
+    public String getUsername(String token) throws SignatureException {
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+    }
+    public String getRoles(String token) throws SignatureException {
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().get("roles").toString();
+    }
+    public Date getExpires(String token) throws SignatureException {
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getExpiration();
     }
 }

@@ -33,19 +33,30 @@ function App() {
 
   const loginSuccessHandler = (response) => {
     const decoded = jwt_decode(response.data.accessToken);
-
+    console.log(
+      'on loginSuccessHandler, response: ',
+      response,
+      ', decoded: ',
+      decoded
+    );
     setUsername(decoded.sub);
     AuthService.setup(response.data);
     selectMainCategoryHandler(mainCategories[0].name);
   };
-  const loginFailHandler = (response) => {};
+  const loginFailHandler = (error) => {
+    console.log('on loginFailHandler, error: ', error.response);
+    setUsername('');
+    AuthService.reset();
+  };
 
   const logoutSuccessHandler = (response) => {
     setUsername('');
     AuthService.reset();
   };
 
-  const logoutFailHandler = (response) => {};
+  const logoutFailHandler = (error) => {};
+
+  AuthService.keepLoggedIn(loginSuccessHandler, loginFailHandler);
 
   return (
     <div className='container'>

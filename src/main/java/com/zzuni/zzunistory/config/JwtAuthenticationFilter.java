@@ -25,20 +25,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = resolveAccessToken(request);
         if (accessToken != null) {
-            if (jwtProvider.validateAccessToken(accessToken)) {
-                System.out.println("on doFilterInternal, [VALID]:accessToken");
-                System.out.println("on doFilterInternal, authentication: " + jwtProvider.getAuthentication(accessToken).getPrincipal().toString());
-                SecurityContextHolder.getContext().setAuthentication(jwtProvider.getAuthentication(accessToken));
-            } else {
-                String refreshToken = resolveRefreshToken(request);
-                if (jwtProvider.validateRefreshToken(refreshToken)) {
-                    if (!request.getRequestURI().equals("/auth/refresh_token")) {
-                        response.setStatus(401);return;
-                    }
+            try {
+                if (jwtProvider.validateAccessToken(accessToken)) {
+                    SecurityContextHolder.getContext().setAuthentication(jwtProvider.getAuthentication(accessToken));
                 } else {
+                    String refreshToken = resolveRefreshToken(request);
+                    if (refreshToken != null && !jwtProvider.validateRefreshToken(refreshToken)) {
+                        response.setStatus(401);
+                        return;
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            String refreshToken = resolveRefreshToken(request);
+            try {
+                if (refreshToken != null && !jwtProvider.validateRefreshToken(refreshToken)) {
                     response.setStatus(401);
                     return;
                 }
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         }
         filterChain.doFilter(request, response);
@@ -54,6 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String resolveRefreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
+        if(cookies == null) return null;
         for(int i = 0; i < cookies.length; i++) {
             if(cookies[i].getName().equals("refreshToken")) {
                 return cookies[i].getValue();

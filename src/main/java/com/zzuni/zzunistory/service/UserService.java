@@ -6,7 +6,6 @@ import com.zzuni.zzunistory.domain.User;
 import com.zzuni.zzunistory.repository.UserRepository;
 import com.zzuni.zzunistory.vo.UserVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
